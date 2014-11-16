@@ -2,16 +2,16 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android" >
     <item 
         android:state_pressed="true" 
-        android:drawable="@drawable/home_button_1_pressed"
+        android:drawable="@drawable/home_button_pressed"
         android:paddingTop="20dp">   
     </item>
     <item 
         android:state_focused="true" 
-        android:drawable="@drawable/home_button_1_default"
+        android:drawable="@drawable/home_button_enabled"
         android:paddingTop="20dp">   
     </item>
     <item 
-        android:drawable="@drawable/home_button_1_default"
+        android:drawable="@drawable/home_button_enabled"
         android:paddingTop="0dp">
     </item>
 </selector>
