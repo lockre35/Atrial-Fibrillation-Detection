@@ -63,14 +63,17 @@ public class GraphThread extends Thread{
 				CurrentPoint = p;
 				
 				//To change views in the UI Thread, we need to add changes to a method like this
-				Activity.runOnUiThread(new Runnable() {
-				     @Override
-				     public void run() {
-				    	 	//Display raw data points
-							//RawOutput.append("(" + CurrentPoint.getX() + "," + CurrentPoint.getY() + ")");
-							return;
-				    }
-				});
+				if(i%100==0)
+				{
+					Activity.runOnUiThread(new Runnable() {
+					     @Override
+					     public void run() {
+					    	 	//Display raw data points
+								RawOutput.append("(" + CurrentPoint.getX() + "," + CurrentPoint.getY() + ")\r\n");
+								return;
+					    }
+					});
+				}
 				
 				//Add the new point to the line
 				Line.addNewPoints(p);

@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.afib.ui.HomeActivity" >
+
+	<RelativeLayout
+	    android:id="@+id/chart"
+        android:layout_width="wrap_content"
+        android:layout_height="200dip"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="97dp" 
+        android:background="#FFFFFF">
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/home_button_1"
+        android:textSize="22sp"
+        android:text="Begin ECG"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+	/>
+    
+    <TextView
+        android:id="@+id/phoneStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button1"
+        android:layout_below="@+id/button1"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="37dp"
+        android:text="Raw Data"
+        android:textSize="30dp"
+        android:textColor="#243CDC" />
+    
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignLeft="@+id/button1"
+        android:layout_below="@+id/phoneStatus" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="top"
+            android:gravity="top" >
+
+            <TextView
+                android:id="@+id/phoneMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+       			android:textColor="#330000" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</RelativeLayout>
