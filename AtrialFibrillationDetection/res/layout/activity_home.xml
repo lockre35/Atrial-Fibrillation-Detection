@@ -16,7 +16,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:background="@drawable/home_button_1"
-        android:text="Button02"
+        android:text="Find Device"
         android:textColor="#FFFFFF"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -43,7 +43,7 @@
         android:layout_below="@+id/Button02"
         android:layout_marginTop="30dp"
         android:background="@drawable/home_button_1"
-        android:text="Button03"
+        android:text="Instructions"
         android:textColor="#FFFFFF"
         android:textSize="22sp"
         android:textStyle="bold" />
@@ -56,7 +56,7 @@
         android:layout_below="@+id/Button03"
         android:layout_marginTop="30dp"
         android:background="@drawable/home_button_1"
-        android:text="Button04"
+        android:text="Upload ECG"
         android:textColor="#FFFFFF"
         android:textSize="22sp"
         android:textStyle="bold" />

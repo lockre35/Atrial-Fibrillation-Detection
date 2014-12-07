@@ -39,6 +39,8 @@ public class GraphThread extends Thread{
 		//If not interrupted (probably don't need this)
 		while(!this.isInterrupted()){
 			//Create 3000/10 datapoints for each cycle of the graph
+			TestData test = new TestData();
+			//test.startInput();
 			for(int i = 0; i<3000; i+=10)
 			{
 				try{
@@ -50,7 +52,7 @@ public class GraphThread extends Thread{
 				}
 				
 				//Obtain a new point
-				Point p = TestData.getDataFromReciever(i);
+				Point p = test.getDataFromReciever(i);
 				
 				//Log time for sanity reasons
 				if(p.getX()%630 == 0){
