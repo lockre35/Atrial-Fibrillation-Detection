@@ -40,7 +40,7 @@ public class GraphThread extends Thread{
 		while(!this.isInterrupted()){
 			//Create 3000/10 datapoints for each cycle of the graph
 			TestData test = new TestData();
-			//test.startInput();
+			//test.startInput(this.Context);
 			for(int i = 0; i<3000; i+=10)
 			{
 				try{

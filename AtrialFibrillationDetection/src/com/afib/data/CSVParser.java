@@ -2,24 +2,24 @@ package com.afib.data;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStreamReader;
 
-import android.content.*;
-import android.content.res.*;
+import android.content.Context;
 
 public class CSVParser {
 	
 	File file;
-	Reader reader;
+	InputStreamReader reader;
 	BufferedReader in;
+	public Context Context;
 	
-	public CSVParser(){
+	public CSVParser(Context context){
+			this.Context = context;
 	       try {
-	           file = new File("scope_32.csv");
-	           //file = getAssets().open("scope_32.csv");
-	    	   reader = new FileReader(file);
+	           //file = new File("scope_32.csv");
+	           //file = this.Context.getAssets().open("scope_32.csv");
+	    	   reader = new InputStreamReader(this.Context.getAssets().open("scope_32.csv"));
 	           in = new BufferedReader(reader);
 	           in.readLine();
 	           in.readLine();

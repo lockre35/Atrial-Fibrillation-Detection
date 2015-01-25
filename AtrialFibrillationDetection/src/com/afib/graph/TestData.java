@@ -1,13 +1,17 @@
 package com.afib.graph;
 
+import android.content.Context;
 import android.util.Log;
 
-import com.afib.data.*;
+import com.afib.data.DataPoint;
+import com.afib.data.Frame;
+import com.afib.data.InputThread;
 
 public class TestData {
 
 	public static InputThread input;
 	public static Frame currentFrame;
+	public static Context context;
 	
 	public TestData()
 	{
@@ -54,9 +58,10 @@ public class TestData {
 		}
 	}
 	
-	public void startInput()
+	public void startInput(Context context)
 	{
-		input = new InputThread();
+		this.context = context;
+		input = new InputThread(this.context);
 		input.start();
 		currentFrame = input.InputStack.pop();
 		Log.i("TestData", "Input Thread Started");
