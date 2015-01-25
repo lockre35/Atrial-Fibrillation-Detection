@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.afib.data.Constants;
 import com.afib.data.InputService;
 
