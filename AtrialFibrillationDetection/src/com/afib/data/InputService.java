@@ -1,6 +1,10 @@
 package com.afib.data;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -83,24 +87,38 @@ public class InputService extends Service {
 				final Service parameter = this;
 				dataGet = new Thread(new Runnable(){
 				    public void run() {
-				    // TODO Auto-generated method stub
-				    while(true)
-				    {
-			           try {
-			               Thread.sleep(5000);
-			               Log.i("InputService", "Service Running Still");
-			               
-			               //Send a message to broadcast receivers
-			               Intent i = new Intent("android.intent.action.MAIN").putExtra("some_msg", "Message Sent");
-			               parameter.sendBroadcast(i);
-			               
-			           } catch (InterruptedException e) {
-			               // TODO Auto-generated catch block
-			               e.printStackTrace();
-			               //Kill the thread
-			               return;
-			           }
-				    }
+				        try {
+				        	String path = parameter.getExternalFilesDir(null).getAbsolutePath();
+				        	File file = new File(path + "/afib_recording.txt");
+				        	Log.i("InputService",path);
+				        	FileOutputStream stream = new FileOutputStream(file);
+				        	try {
+				        	    stream.write("testing".getBytes());
+				        	} finally {
+				        	    stream.close();
+				        	}
+				        }
+				        catch (IOException e) {
+				            Log.e("Exception", "File write failed: " + e.toString());
+				        }
+					    // TODO Auto-generated method stub
+					    while(true)
+					    {
+				           try {
+				               Thread.sleep(5000);
+				               Log.i("InputService", "Service Running Still");
+				               
+				               //Send a message to broadcast receivers
+				               Intent i = new Intent("android.intent.action.MAIN").putExtra("some_msg", "Message Sent");
+				               parameter.sendBroadcast(i);
+				               
+				           } catch (InterruptedException e) {
+				               // TODO Auto-generated catch block
+				               e.printStackTrace();
+				               //Kill the thread
+				               return;
+				           }
+					    }
 	            }
 				});
 				

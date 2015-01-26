@@ -1,23 +1,26 @@
 package com.afib.ui;
 
-import com.afib.data.Constants;
-import com.afib.data.InputService;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.afib.data.Constants;
+import com.afib.data.InputService;
 
 /**
  * Fragment activity used to display a list of basic features to the user.
@@ -31,6 +34,7 @@ public class HomeFragment extends Fragment{
 	public Button findDeviceButton;
 	public Button instructionsButton;
 	private BroadcastReceiver mReceiver;
+	private boolean isServiceRunning;
 	
 	/**
 	 * Override the onCreateView of Fragment so that we can initialize necessary information.
@@ -43,15 +47,21 @@ public class HomeFragment extends Fragment{
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
 		//Initialize the view for this fragment
 		View inflatedView = inflater.inflate(R.layout.homefragment, container, false);
 			   
 		//Locate views in the layout
 		graphActivityButton = (Button) inflatedView.findViewById(R.id.GraphActivityButton);
 		findDeviceButton = (Button) inflatedView.findViewById(R.id.Button02);
-		instructionsButton = (Button) inflatedView.findViewById(R.id.Button03);
-			
+
+		//Check if the input service is already running and set the text
+		//of the findDeviceButton accordingly
+	    if(isMyServiceRunning(InputService.class))
+		{
+			isServiceRunning = true;
+			findDeviceButton.setText("Disconnect");
+		}
+		
 		//Add an onclick listener to the button so that we can start and stop the ECG graph
 		graphActivityButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
@@ -76,26 +86,26 @@ public class HomeFragment extends Fragment{
 		findDeviceButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				//Create a new intent for the input service and pass in a custom flag that signals
-				//the start of the service
-				Intent startIntent = new Intent((Context)HomeFragment.this.getActivity(), InputService.class);
-				startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-				Context ctx = (Context)HomeFragment.this.getActivity();
-				ctx.startService(startIntent);
-				Log.i("HomeFragment", "Started Service");
-			}
-		});
-		
-		//Listener to stop the input service
-		instructionsButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				//Create a new intent for the input service and pass in a custom flag that signals the
-				//end of the service
-				Intent startIntent = new Intent((Context)HomeFragment.this.getActivity(), InputService.class);
-				startIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
-				Context ctx = (Context)HomeFragment.this.getActivity();
-				ctx.startService(startIntent);
+				if(!isServiceRunning)
+				{
+					isServiceRunning = true;
+					//Create a new intent for the input service and pass in a custom flag that signals
+					//the start of the service
+					Intent startIntent = new Intent((Context)HomeFragment.this.getActivity(), InputService.class);
+					startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+					Context ctx = (Context)HomeFragment.this.getActivity();
+					ctx.startService(startIntent);
+					Log.i("HomeFragment", "Started Service");
+				}else if(isServiceRunning)
+				{
+					//Create a new intent for the input service and pass in a custom flag that signals the
+					//end of the service
+					Intent startIntent = new Intent((Context)HomeFragment.this.getActivity(), InputService.class);
+					startIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
+					Context ctx = (Context)HomeFragment.this.getActivity();
+					ctx.startService(startIntent);
+					isServiceRunning = false;
+				}
 			}
 		});
 		
@@ -134,6 +144,14 @@ public class HomeFragment extends Fragment{
                     break;
                 //Button is released
                 case MotionEvent.ACTION_UP:
+                	//Set the text to the correct value
+                	if(findDeviceButton.getText().equals("Find Device"))
+                	{
+                		findDeviceButton.setText("Disconnect");
+                	}else
+                	{
+                		findDeviceButton.setText("Find Device");
+                	}
                 	//Change padding back to original position
                 	findDeviceButton.setPadding(0, 0, 0, 0);
                     break;
@@ -184,5 +202,15 @@ public class HomeFragment extends Fragment{
 		super.onPause();
 		//unregister our receiver
 		getActivity().unregisterReceiver(this.mReceiver);
+	}
+	
+	private boolean isMyServiceRunning(Class<?> serviceClass) {
+	    ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if (serviceClass.getName().equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }
