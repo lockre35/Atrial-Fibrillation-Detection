@@ -1,9 +1,12 @@
 package com.afib.data;
 
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -85,34 +88,44 @@ public class InputService extends Service {
 			{
 				//Service parameter to pass to this thread
 				final Service parameter = this;
+
 				dataGet = new Thread(new Runnable(){
 				    public void run() {
+				    	InputStream dataInputStream = null;
+				    	BufferedReader br = null;
+				    	
+				    	FileOutputStream localOutputStream = null;
+				    	
 				        try {
+				        	dataInputStream = parameter.getAssets().open("scope_32.csv");
+				        	br = new BufferedReader(new InputStreamReader(dataInputStream));
+				        	
 				        	String path = parameter.getExternalFilesDir(null).getAbsolutePath();
 				        	File file = new File(path + "/afib_recording.txt");
-				        	Log.i("InputService",path);
-				        	FileOutputStream stream = new FileOutputStream(file);
-				        	try {
+				        	//Log.i("InputService",path);
+				        	localOutputStream = new FileOutputStream(file);
+				        	/*try {
 				        	    stream.write("testing".getBytes());
 				        	} finally {
 				        	    stream.close();
-				        	}
+				        	}*/
 				        }
-				        catch (IOException e) {
+				        catch (Exception e) {
 				            Log.e("Exception", "File write failed: " + e.toString());
 				        }
 					    // TODO Auto-generated method stub
 					    while(true)
 					    {
 				           try {
-				               Thread.sleep(5000);
-				               Log.i("InputService", "Service Running Still");
-				               
+				               //Thread.sleep(5000);
+				               //Log.i("InputService", "Service Running Still");
+				               String strLine = br.readLine();
+				               localOutputStream.write((strLine).getBytes());
 				               //Send a message to broadcast receivers
-				               Intent i = new Intent("android.intent.action.MAIN").putExtra("some_msg", "Message Sent");
+				               Intent i = new Intent("android.intent.action.MAIN").putExtra("some_msg", strLine);
 				               parameter.sendBroadcast(i);
 				               
-				           } catch (InterruptedException e) {
+				           } catch (Exception e) {
 				               // TODO Auto-generated catch block
 				               e.printStackTrace();
 				               //Kill the thread

@@ -183,7 +183,7 @@ public class HomeFragment extends Fragment{
 				//extract our message from intent
 				String msgFromService = intent.getStringExtra("some_msg");
 				//log our message value
-				//Log.i("HomeActivity", msgFromService);
+				Log.i("HomeActivity", msgFromService);
  
 			}
 		};
