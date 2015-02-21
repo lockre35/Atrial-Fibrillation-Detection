@@ -86,6 +86,7 @@ public class HomeFragment extends Fragment{
 		findDeviceButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
+				/*
 				if(!isServiceRunning)
 				{
 					isServiceRunning = true;
@@ -106,6 +107,20 @@ public class HomeFragment extends Fragment{
 					ctx.startService(startIntent);
 					isServiceRunning = false;
 				}
+				*/				
+				// Create new fragment and transaction
+			    Fragment newFragment = new FindDeviceFragment(); 
+			    // consider using Java coding conventions (upper first char class names!!!)
+			    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+			    // Replace whatever is in the fragment_container view with this fragment,
+			    // and add the transaction to the back stack so that the return button works
+			    // properly
+			    transaction.replace(android.R.id.content, newFragment);
+			    transaction.addToBackStack(null);
+
+			    // Commit the transaction
+			    transaction.commit();
 			}
 		});
 		
