@@ -86,17 +86,31 @@ public class HomeFragment extends Fragment{
 		findDeviceButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				/*
+
 				if(!isServiceRunning)
 				{
-					isServiceRunning = true;
+					/*isServiceRunning = true;
 					//Create a new intent for the input service and pass in a custom flag that signals
 					//the start of the service
 					Intent startIntent = new Intent((Context)HomeFragment.this.getActivity(), InputService.class);
 					startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
 					Context ctx = (Context)HomeFragment.this.getActivity();
 					ctx.startService(startIntent);
-					Log.i("HomeFragment", "Started Service");
+					Log.i("HomeFragment", "Started Service");*/
+					
+					// Create new fragment and transaction
+				    Fragment newFragment = new FindDeviceFragment(); 
+				    // consider using Java coding conventions (upper first char class names!!!)
+				    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+				    // Replace whatever is in the fragment_container view with this fragment,
+				    // and add the transaction to the back stack so that the return button works
+				    // properly
+				    transaction.replace(android.R.id.content, newFragment);
+				    transaction.addToBackStack(null);
+				    
+				    // Commit the transaction
+				    transaction.commit();
 				}else if(isServiceRunning)
 				{
 					//Create a new intent for the input service and pass in a custom flag that signals the
@@ -107,20 +121,6 @@ public class HomeFragment extends Fragment{
 					ctx.startService(startIntent);
 					isServiceRunning = false;
 				}
-				*/				
-				// Create new fragment and transaction
-			    Fragment newFragment = new FindDeviceFragment(); 
-			    // consider using Java coding conventions (upper first char class names!!!)
-			    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-			    // Replace whatever is in the fragment_container view with this fragment,
-			    // and add the transaction to the back stack so that the return button works
-			    // properly
-			    transaction.replace(android.R.id.content, newFragment);
-			    transaction.addToBackStack(null);
-
-			    // Commit the transaction
-			    transaction.commit();
 			}
 		});
 		

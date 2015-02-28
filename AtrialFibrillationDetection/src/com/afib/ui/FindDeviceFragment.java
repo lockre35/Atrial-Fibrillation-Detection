@@ -14,6 +14,9 @@ import java.util.Map;
 
 import org.achartengine.GraphicalView;
 
+import com.afib.data.Constants;
+import com.afib.data.InputService;
+
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -25,6 +28,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -188,6 +192,19 @@ public class FindDeviceFragment extends Fragment implements OnItemClickListener{
 				.get(position);
 		String addr = hashMap.get(DEVICE_ADDRESS);
 		String name = hashMap.get(DEVICE_NAME);
+
+
+			//Create a new intent for the input service and pass in a custom flag that signals
+			//the start of the service
+			Intent startIntent = new Intent((Context)FindDeviceFragment.this.getActivity(), InputService.class);
+			startIntent.putExtra(Constants.ACTION.DEVICE_ADDRESS, addr);
+			startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+			Context ctx = (Context)FindDeviceFragment.this.getActivity();
+			ctx.startService(startIntent);
+			Log.i("FindDeviceFragment", "Started Service");
+
+		
+		getFragmentManager().popBackStack();
 	}
 	
 	private void scanLeDevice() {
