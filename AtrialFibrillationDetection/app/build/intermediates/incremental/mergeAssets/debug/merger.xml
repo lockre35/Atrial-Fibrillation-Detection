@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="C:\Users\Logan\AndroidStudioProjects\AtrialFibrillationDetection\app\src\main\assets"><file name="scope_32.csv" path="C:\Users\Logan\AndroidStudioProjects\AtrialFibrillationDetection\app\src\main\assets\scope_32.csv"/></source></dataSet><dataSet config="debug"><source path="C:\Users\Logan\AndroidStudioProjects\AtrialFibrillationDetection\app\src\debug\assets"/></dataSet></merger>

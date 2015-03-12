@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Logan\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
+        <dex dex="C:\Users\Logan\AndroidStudioProjects\AtrialFibrillationDetection\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-1c73b204a351bc2aa219989650e87bad8ee9640b.jar" />
+    </item>
+    <item
+        jar="C:\Users\Logan\AndroidStudioProjects\AtrialFibrillationDetection\app\libs\achartengine-1.1.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="9932e3fb9fbe54e80873e77f72a99f79e33b3250">
+        <dex dex="C:\Users\Logan\AndroidStudioProjects\AtrialFibrillationDetection\app\build\intermediates\pre-dexed\debug\achartengine-1.1.0-73e869cb5213539c5ece6b409bd6365b72c4b268.jar" />
+    </item>
+
+</items>
