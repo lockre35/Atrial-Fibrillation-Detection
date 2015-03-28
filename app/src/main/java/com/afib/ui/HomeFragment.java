@@ -196,9 +196,11 @@ public class HomeFragment extends Fragment{
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				//extract our message from intent
-				String msgFromService = intent.getStringExtra("some_msg");
+				//String msgFromService = intent.getStringExtra("EXTRA_DATA");
 				//log our message value
-				Log.i("HomeActivity", msgFromService);
+				//Log.i("HomeFragment", "BroadcastReceiver: " + msgFromService);
+                byte[] data = intent.getByteArrayExtra("EXTRA_DATA");
+                Log.i("HomeFrament", "BroadcastREceiver: " + data.toString());
  
 			}
 		};

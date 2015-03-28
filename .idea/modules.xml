@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Atrial-Fibrillation-Detection.iml" filepath="$PROJECT_DIR$/Atrial-Fibrillation-Detection.iml" />
       <module fileurl="file://$PROJECT_DIR$/AtrialFibrillationDetection.iml" filepath="$PROJECT_DIR$/AtrialFibrillationDetection.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

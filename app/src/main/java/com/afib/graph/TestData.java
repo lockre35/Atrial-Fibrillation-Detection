@@ -19,10 +19,10 @@ public class TestData {
 	}
 	
 	// x is the data number (not auto generated)
-	public Point getDataFromReciever(int x)
+	public Point getDataFromReciever(int location, byte voltage)
 	{
 		//return getPointFromInputThread();
-		return new Point(x, generateRandomData(x));
+		return new Point(location, (int)voltage);
 	}
 	
 	// generate y values based on the sine wave
@@ -39,31 +39,5 @@ public class TestData {
 		y = y*100;
 		return (int) Math.round(y);
 	}
-	
-	
-	private Point getPointFromInputThread()
-	{
-		if(currentFrame.DataPoints.isEmpty())
-		{
-			currentFrame = input.InputStack.pop();
-		}
-		if(!currentFrame.DataPoints.isEmpty())
-		{
-			DataPoint p = currentFrame.DataPoints.pop();
-			return new Point(p.getX(),p.getY());
-		}
-		else
-		{
-			return new Point(0,0);
-		}
-	}
-	
-	public void startInput(Context context)
-	{
-		this.context = context;
-		input = new InputThread(this.context);
-		input.start();
-		currentFrame = input.InputStack.pop();
-		Log.i("TestData", "Input Thread Started");
-	}
+
 }

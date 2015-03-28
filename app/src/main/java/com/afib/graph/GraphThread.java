@@ -16,15 +16,17 @@ public class GraphThread extends Thread{
 	private Context Context;
 	private Activity Activity;
 	private Point CurrentPoint;
+    private byte[] data;
 	
 	//Create a new thread by passing in information about the view, the line to display, and the context
-	public GraphThread(TextView rawOutput, LineGraph line, GraphicalView view, Context context, Activity activity){
+	public GraphThread(TextView rawOutput, LineGraph line, GraphicalView view, Context context, Activity activity, byte[] data){
 		super();
 		this.RawOutput = rawOutput;
 		this.Line = line;
 		this.View = view;
 		this.Context = context;
 		this.Activity = activity;
+        this.data = data;
 	}
 	
 	public void run(){
@@ -37,22 +39,23 @@ public class GraphThread extends Thread{
 		long endTime = System.nanoTime();
 		
 		//If not interrupted (probably don't need this)
-		while(!this.isInterrupted()){
+		//while(!this.isInterrupted()){
 			//Create 3000/10 datapoints for each cycle of the graph
 			TestData test = new TestData();
 			//test.startInput(this.Context);
-			for(int i = 0; i<3000; i+=10)
+
+			for(int i = 0; i<data.length; i+=1)
 			{
 				try{
 					//Slow the display down
-					Thread.sleep(25);
+					Thread.sleep(10);
 				}catch (InterruptedException e){
 					e.printStackTrace();
 					return;
 				}
 				
 				//Obtain a new point
-				Point p = test.getDataFromReciever(i);
+				Point p = test.getDataFromReciever(i,data[i]);
 				
 				//Log time for sanity reasons
 				if(p.getX()%630 == 0){
@@ -84,8 +87,8 @@ public class GraphThread extends Thread{
 				View.repaint();
 			}
 			//A cycle has completed so we remove all points and start again
-			Line.removeAllPoints();
-		}
+			//Line.removeAllPoints();
+		//}
 	
 	}
 }

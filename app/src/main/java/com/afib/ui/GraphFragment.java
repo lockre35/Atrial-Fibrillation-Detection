@@ -2,7 +2,12 @@ package com.afib.ui;
 
 import org.achartengine.GraphicalView;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +36,8 @@ public class GraphFragment extends Fragment{
 	private static RelativeLayout graphView;
 	public TextView PhoneMsg;
 	public Button button1;
+    private BroadcastReceiver mReceiver;
+
 	
 	/**
 	 * Override the onCreateView of Fragment so that we can initialize necessary information.
@@ -56,7 +63,11 @@ public class GraphFragment extends Fragment{
 		button1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//If graph thread is currently inactive, start the graph
+                if(!StreamingStatus)
+                    StreamingStatus = true;
+                else
+                    StreamingStatus = false;
+/*				//If graph thread is currently inactive, start the graph
 				if(!StreamingStatus && !thread.isAlive()){
 					StreamingStatus = true;
 					
@@ -79,7 +90,7 @@ public class GraphFragment extends Fragment{
 					//Apply and interrupt to the thread and print some output
 					thread.interrupt();
 					PhoneMsg.append("Output Stopped!\n");
-				}
+				}*/
 			}
 		});
 		
@@ -116,7 +127,74 @@ public class GraphFragment extends Fragment{
 		//return the view for the fragment
 		return inflatedView;
 	}
-	
+
+
+    /**
+     * Override the onResume function of Fragment so that we can initialize a
+     * BroadcastReceiver that allows for data to be sent from the service
+     * to this activity.
+     *
+     */
+    @Override
+    public void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+
+        IntentFilter intentFilter = new IntentFilter("android.intent.action.MAIN");
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //extract our message from intent
+                //String msgFromService = intent.getStringExtra("EXTRA_DATA");
+                byte[] data = intent.getByteArrayExtra("EXTRA_DATA");
+                //byte[] data = msgFromService.getBytes();
+                //log our message value
+                Log.i("GraphFragment", "BroadcastReceiver: " + data.toString());
+                //If graph thread is currently inactive, start the graph
+                if(StreamingStatus == true){
+                    //Apply and interrupt to the thread and print some output
+                    thread.interrupt();
+                    PhoneMsg.append("Output Stopped!\n");
+
+                    //Refresh the graph
+                    line.removeAllPoints();
+                    view = line.getView(getActivity());
+                    graphView.removeAllViews();
+                    graphView.addView(view);
+
+                    //Create a new thread (we can't use the thread that was interrupted)
+                    thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity(), data);
+
+                    //Start the new thread and print some ouput
+                    thread.start();
+                    PhoneMsg.append("Output Started!\n");
+
+                    //If graph thread is currently active, stop the graph
+                }
+
+            }
+        };
+        //registering our receiver
+        getActivity().registerReceiver(mReceiver, intentFilter);
+    }
+
+
+    /**
+     * Override the onPause method of Fragment to unregister the BroadcastReceiver
+     * attached to this activity.
+     *
+     */
+    @Override
+    public void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+        //unregister our receiver
+        getActivity().unregisterReceiver(this.mReceiver);
+        thread.interrupt();
+        PhoneMsg.append("Output Stopped!\n");
+    }
+
 	/**
 	 * Override the onStart method of Fragment so that we can create the graph view
 	 * and initialize a graph thread.
@@ -128,6 +206,10 @@ public class GraphFragment extends Fragment{
 		super.onStart();
 		view = line.getView(getActivity());
 		graphView.addView(view);
-		thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity());
+        byte[] data = new byte[100];
+        //byte[] data = new byte[]{10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91};
+        thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity(), data);
+        //thread.start();
+		//thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity());
 	}
 }

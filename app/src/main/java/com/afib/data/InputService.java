@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.nio.charset.*;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -34,6 +35,7 @@ import android.util.Log;
 import com.afib.ui.MainActivity;
 import com.afib.ui.R;
 import com.afib.communication.*;
+
 
 
 /**
@@ -61,8 +63,7 @@ public class InputService extends Service {
 	public final static String ACTION_GATT_RSSI = "ACTION_GATT_RSSI";
 	public final static String ACTION_DATA_AVAILABLE = "ACTION_DATA_AVAILABLE";
 	public final static String EXTRA_DATA = "EXTRA_DATA";
-	
-	public int testDataCount = 0;
+
 	public long startTime = 0;
 
 	public final static UUID UUID_BLE_SHIELD_TX = UUID
@@ -128,38 +129,46 @@ public class InputService extends Service {
 	private void broadcastUpdate(final String action) {
 		final Intent intent = new Intent(action);
 		getGattService(getSupportedGattService());
-		sendBroadcast(intent);
+		//sendBroadcast(intent);
 	}
 
 	private void broadcastUpdate(final String action, int rssi) {
 		final Intent intent = new Intent(action);
-		intent.putExtra(EXTRA_DATA, String.valueOf(rssi));
-		sendBroadcast(intent);
+		//intent.putExtra(EXTRA_DATA, String.valueOf(rssi));
+		//sendBroadcast(intent);
 	}
 
+    //Read 100 data points a second
+    //Send 10 at a time
+    private byte[] byteArray = new byte[0];
 	private void broadcastUpdate(final String action,
 			final BluetoothGattCharacteristic characteristic) {
-		final Intent intent = new Intent(action);
+		final Intent intent = new Intent("android.intent.action.MAIN");
+
+        //				               Intent i = new Intent("android.intent.action.MAIN").putExtra("some_msg", strLine);
+//				               parameter.sendBroadcast(i);
 		// This is special handling for the Heart Rate Measurement profile. Data
 		// parsing is
 		// carried out as per profile specifications:
 		// http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
 		if (UUID_BLE_SHIELD_RX.equals(characteristic.getUuid())) {
 			final byte[] rx = characteristic.getValue();
-			testDataCount++;
-			//Log.i("InputService", "Data: " + new String(rx));
-			intent.putExtra(EXTRA_DATA, rx);
+            if(rx.length == 20)
+            {
+                byte[] result = new byte[byteArray.length + rx.length];
+                System.arraycopy(byteArray, 0, result, 0,  byteArray.length);
+                System.arraycopy(rx, 0, result, byteArray.length, rx.length);
+                byteArray = result;
+                if(byteArray.length > 500)
+                {
+                    intent.putExtra(EXTRA_DATA,byteArray);
+                    sendBroadcast(intent);
+                    byteArray = new byte[0];
+                }
+            }
+            //Log.i("InputService", "Data: " + new String(rx, Charset.forName("UTF8")));
+			//intent.putExtra(EXTRA_DATA, rx);
 		}
-
-		if(testDataCount > 1000)
-		{
-			long endTime = 0;
-			endTime = System.currentTimeMillis();
-			Log.i("InputService", "TotalTime: " + (endTime - startTime));
-			close();
-		}
-		
-		sendBroadcast(intent);
 	}
 	
 	private void getGattService(BluetoothGattService gattService) {

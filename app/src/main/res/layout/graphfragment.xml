@@ -22,14 +22,13 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:background="@drawable/home_button_1"
         android:textSize="22sp"
         android:text="Begin ECG"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
-	/>
+        android:layout_below="@+id/chart"
+        android:layout_centerHorizontal="true" />
     
     <TextView
         android:id="@+id/phoneStatus"
