@@ -36,10 +36,10 @@ public class LineGraph {
 		
 		//Set attributes for the entire graph
 		mRenderer.addSeriesRenderer(renderer);
-		mRenderer.setXAxisMax(500);
+		mRenderer.setXAxisMax(1000);
 		mRenderer.setXAxisMin(0);
-		mRenderer.setYAxisMax(0);
-		mRenderer.setYAxisMin(-255);
+		mRenderer.setYAxisMax(300);
+		mRenderer.setYAxisMin(0);
 		double[] initialRange = { 
 			    0, 100, 0, 255
 			};

@@ -159,14 +159,19 @@ public class InputService extends Service {
                 System.arraycopy(byteArray, 0, result, 0,  byteArray.length);
                 System.arraycopy(rx, 0, result, byteArray.length, rx.length);
                 byteArray = result;
-                if(byteArray.length > 500)
+/*                if(byteArray.length > 1000)
+                {
+                    intent.putExtra(EXTRA_DATA,byteArray);
+                    sendBroadcast(intent);
+                    byteArray = new byte[0];
+                }*/
+                if(byteArray.length > 1000)
                 {
                     intent.putExtra(EXTRA_DATA,byteArray);
                     sendBroadcast(intent);
                     byteArray = new byte[0];
                 }
             }
-            //Log.i("InputService", "Data: " + new String(rx, Charset.forName("UTF8")));
 			//intent.putExtra(EXTRA_DATA, rx);
 		}
 	}

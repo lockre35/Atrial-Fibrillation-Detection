@@ -48,7 +48,7 @@ public class GraphThread extends Thread{
 			{
 				try{
 					//Slow the display down
-					Thread.sleep(10);
+					Thread.sleep(4);
 				}catch (InterruptedException e){
 					e.printStackTrace();
 					return;

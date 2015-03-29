@@ -22,7 +22,7 @@ public class TestData {
 	public Point getDataFromReciever(int location, byte voltage)
 	{
 		//return getPointFromInputThread();
-		return new Point(location, (int)voltage);
+		return new Point(location, voltage & 0xFF);
 	}
 	
 	// generate y values based on the sine wave
