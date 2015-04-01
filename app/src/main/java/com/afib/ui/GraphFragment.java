@@ -20,6 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.afib.graph.GraphThread;
 import com.afib.graph.LineGraph;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * GraphFragment extends Fragment to present a streaming graph to 
@@ -37,6 +39,7 @@ public class GraphFragment extends Fragment{
 	public TextView PhoneMsg;
 	public Button button1;
     private BroadcastReceiver mReceiver;
+    private BlockingQueue DataQueue;
 
 	
 	/**
@@ -63,34 +66,22 @@ public class GraphFragment extends Fragment{
 		button1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-                if(!StreamingStatus)
+                if(!StreamingStatus) {
+                    byte[] data = new byte[100];
+                    thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity(), data, DataQueue);
+                    thread.start();
                     StreamingStatus = true;
-                else
+                    PhoneMsg.append("Output Started!\n");
+                }
+                else {
                     StreamingStatus = false;
-/*				//If graph thread is currently inactive, start the graph
-				if(!StreamingStatus && !thread.isAlive()){
-					StreamingStatus = true;
-					
-					//Refresh the graph
-					line.removeAllPoints();
-					view = line.getView(getActivity());
-					graphView.removeAllViews();
-					graphView.addView(view);
-					
-					//Create a new thread (we can't use the thread that was interrupted)
-					thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity());
-					
-					//Start the new thread and print some ouput
-					thread.start();
-					PhoneMsg.append("Output Started!\n");
-					
-				//If graph thread is currently active, stop the graph
-				}else{
-					StreamingStatus = false;
-					//Apply and interrupt to the thread and print some output
-					thread.interrupt();
-					PhoneMsg.append("Output Stopped!\n");
-				}*/
+                    try{
+                        DataQueue.put("Terminate Thread".getBytes());
+                        PhoneMsg.append("Output Stopped!\n");
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
 			}
 		});
 		
@@ -154,8 +145,14 @@ public class GraphFragment extends Fragment{
                 //If graph thread is currently inactive, start the graph
                 if(StreamingStatus == true){
                     //Apply and interrupt to the thread and print some output
-                    thread.interrupt();
-                    PhoneMsg.append("Output Stopped!\n");
+                    //thread.interrupt();
+
+/*                    try{
+                        DataQueue.put("Terminate Thread".getBytes());
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }*/
+/*                    PhoneMsg.append("Output Stopped!\n");
 
                     //Refresh the graph
                     line.removeAllPoints();
@@ -164,11 +161,16 @@ public class GraphFragment extends Fragment{
                     graphView.addView(view);
 
                     //Create a new thread (we can't use the thread that was interrupted)
-                    thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity(), data);
+                    thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity(), data, DataQueue);
 
                     //Start the new thread and print some ouput
                     thread.start();
-                    PhoneMsg.append("Output Started!\n");
+                    PhoneMsg.append("Output Started!\n");*/
+                    try{
+                        DataQueue.put(data);
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
 
                     //If graph thread is currently active, stop the graph
                 }
@@ -191,7 +193,13 @@ public class GraphFragment extends Fragment{
         super.onPause();
         //unregister our receiver
         getActivity().unregisterReceiver(this.mReceiver);
-        thread.interrupt();
+        try{
+            if(thread.isAlive())
+                DataQueue.put("Terminate Thread".getBytes());
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+
         PhoneMsg.append("Output Stopped!\n");
     }
 
@@ -207,9 +215,6 @@ public class GraphFragment extends Fragment{
 		view = line.getView(getActivity());
 		graphView.addView(view);
         byte[] data = new byte[100];
-        //byte[] data = new byte[]{10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91,10,20,30,40,50,60,71,80,90,91};
-        thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity(), data);
-        //thread.start();
-		//thread = new GraphThread(PhoneMsg, line, view, getActivity(), getActivity());
+        DataQueue = new ArrayBlockingQueue(1000);
 	}
 }

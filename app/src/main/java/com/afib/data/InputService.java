@@ -165,7 +165,7 @@ public class InputService extends Service {
                     sendBroadcast(intent);
                     byteArray = new byte[0];
                 }*/
-                if(byteArray.length > 1000)
+                if(byteArray.length > 100)
                 {
                     intent.putExtra(EXTRA_DATA,byteArray);
                     sendBroadcast(intent);
