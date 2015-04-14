@@ -14,7 +14,9 @@ import android.view.WindowManager;
  * @author Logan
  */
 public class MainActivity extends Activity {
-		
+
+    public static String PACKAGE_NAME;
+
 	/**
 	 * Called when the activity is launched or the app process has been killed.  
 	 * More information about the activity life cycle can be found here, 
@@ -25,7 +27,9 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-      
+
+        PACKAGE_NAME = getApplicationContext().getPackageName();
+
 		//If there is no existing activity, we load the default fragment
 		if(savedInstanceState == null) 
 		{
