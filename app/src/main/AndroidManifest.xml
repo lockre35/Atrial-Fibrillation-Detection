@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         
-        <service android:name="com.afib.data.InputService" >
+        <service android:name="com.afib.communication.InputService" >
         </service>
     </application>
 

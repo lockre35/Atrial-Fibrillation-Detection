@@ -35,8 +35,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 /**
- * Service for managing connection and data communication with a GATT server
- * hosted on a given Bluetooth LE device.
+ * Not sure how this is going to go...
  */
 public class GattService extends Service {
 	private final static String TAG = GattService.class.getSimpleName();

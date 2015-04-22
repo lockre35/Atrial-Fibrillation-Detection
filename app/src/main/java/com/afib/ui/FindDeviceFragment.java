@@ -1,47 +1,32 @@
 package com.afib.ui;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.achartengine.GraphicalView;
-
-import com.afib.data.Constants;
-import com.afib.data.InputService;
+import com.afib.communication.Constants;
+import com.afib.communication.InputService;
 
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -54,7 +39,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * 
  * @author Logan
  */
-public class FindDeviceFragment extends Fragment implements OnItemClickListener{
+public class FindDeviceFragment extends Fragment implements OnItemClickListener {
 	
 	private List<Map<String, String>> listItems = new ArrayList<Map<String, String>>();
 	private ListView listView;
@@ -68,15 +53,19 @@ public class FindDeviceFragment extends Fragment implements OnItemClickListener{
 	private ArrayList<BluetoothDevice> devices;
 	private String mDeviceAddress;
 	private String mDeviceName;
+    private ProgressDialog progressDialog;
 	
 	private String DEVICE_NAME = "name";
 	private String DEVICE_ADDRESS = "address";
 	public final static String EXTRA_DEVICE_ADDRESS = "EXTRA_DEVICE_ADDRESS";
 	public final static String EXTRA_DEVICE_NAME = "EXTRA_DEVICE_NAME";
 	private static final int REQUEST_ENABLE_BT = 1;
-	private static final long SCAN_PERIOD = 3000;
+	private static final long SCAN_PERIOD = 1500;
 	public static final int REQUEST_CODE = 30;
 	public static final int RESULT_CODE = 31;
+    public final static int FILE_SELECTED_CODE = 999;
+    public final static String FILE_NAME = "FILE_NAME";
+    public static final int DIALOG_FRAGMENT = 1;
 	
 	
 	/**
@@ -113,7 +102,12 @@ public class FindDeviceFragment extends Fragment implements OnItemClickListener{
 		
 		scanButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
-			public void onClick(View v) {	
+			public void onClick(View v) {
+                //create a progress bar while the video file is being loaded
+                progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setMessage("Scanning...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
 				listItems.clear();
 				devices.clear();
 				map = new HashMap<String, String>();
@@ -122,27 +116,7 @@ public class FindDeviceFragment extends Fragment implements OnItemClickListener{
 				listItems.add(map);
 				adapter.notifyDataSetChanged();
 				scanLeDevice();
-				/*
-				if(devices.size() == 0)
-				{
-					map = new HashMap<String, String>();
-					map.put(DEVICE_NAME, "No Devices Found");
-					map.put(DEVICE_ADDRESS, "");
-					listItems.add(map);
-				}
-				else
-				{
-					for (BluetoothDevice device : devices) {
-						map = new HashMap<String, String>();
-						if(device.getName()==null)
-							map.put(DEVICE_NAME, "(No Name)");
-						else
-							map.put(DEVICE_NAME, device.getName());
-						map.put(DEVICE_ADDRESS, device.getAddress());
-						listItems.add(map);
-					}
-				}
-				adapter.notifyDataSetChanged();*/
+
 			}
 		});
 		
@@ -172,41 +146,74 @@ public class FindDeviceFragment extends Fragment implements OnItemClickListener{
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// User chose not to enable Bluetooth.
-		if (requestCode == REQUEST_ENABLE_BT
-				&& resultCode == Activity.RESULT_CANCELED) {
+		if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
 
-		} else if (requestCode == REQUEST_CODE
-				&& resultCode == RESULT_CODE) {
+		} else if (requestCode == REQUEST_CODE && resultCode == RESULT_CODE) {
 			mDeviceAddress = data.getStringExtra(EXTRA_DEVICE_ADDRESS);
 			mDeviceName = data.getStringExtra(EXTRA_DEVICE_NAME);
 			//mBluetoothLeService.connect(mDeviceAddress);
 		}
+        // Handle response from file select dialog
+        else if (requestCode == DIALOG_FRAGMENT && resultCode == FILE_SELECTED_CODE) {
+            Log.i("FindDeviceFragment", "Dismissed with message: " + data.getStringExtra(FILE_NAME));
+
+            //Create a new intent for the input service and pass in a custom flag that signals
+            //the start of the service
+            Intent startIntent = new Intent((Context)FindDeviceFragment.this.getActivity(), InputService.class);
+            startIntent.putExtra(Constants.ACTION.DEVICE_ADDRESS, mDeviceAddress);
+            startIntent.putExtra(Constants.ACTION.OUTPUT_FILENAME, data.getStringExtra(FILE_NAME));
+            startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+            Context ctx = (Context)FindDeviceFragment.this.getActivity();
+            ctx.startService(startIntent);
+            Log.i("FindDeviceFragment", "Started Service");
+
+
+            getFragmentManager().popBackStack();
+        }
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
 	@Override
-	public void onItemClick(AdapterView<?> adapterView, View view,
-			int position, long id) {
-		HashMap<String, String> hashMap = (HashMap<String, String>) listItems
-				.get(position);
-		String addr = hashMap.get(DEVICE_ADDRESS);
-		String name = hashMap.get(DEVICE_NAME);
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        //Search existing files to provide an option to append to an existing file
+        int newRecordingNumber = 0;
+        ArrayList<String> existingFiles = new ArrayList<String>();
+        String path = getActivity().getExternalFilesDir(null).getAbsolutePath();
+        File recordingFolder = new File(path + "/afib_recordings");
+        Log.i("FindDeviceFragment", "ExternalFilesDir = " + path);
+        if (!recordingFolder.exists())
+        {
+            recordingFolder.mkdir();
+        }
+        File[] files = recordingFolder.listFiles();
+        for(File file : files) {
+            String fileName = file.getName();
+            //If this is an afib recording, get the recording number of a new file
+            if(fileName.contains("recording_"))
+            {
+                existingFiles.add(fileName);
+                String recordingAndExtension = fileName.split("_")[1];
+                String recordingNumber = recordingAndExtension.split("\\.")[0];
+                //If this is the largest recording number
+                if(Integer.parseInt(recordingNumber) > newRecordingNumber)
+                    newRecordingNumber = Integer.parseInt(recordingNumber);
+            }
+        }
 
+        //Display the FileSelectDialog
+        FileSelectDialogFragment selectDialog = new FileSelectDialogFragment();
+        selectDialog.setTargetFragment(FindDeviceFragment.this, DIALOG_FRAGMENT);
+        selectDialog.setNewFileName("recording_" + (newRecordingNumber + 1) + ".afib");
+        selectDialog.setFileNames(existingFiles);
+        selectDialog.show(getFragmentManager(), "FindDeviceFragment");
 
-			//Create a new intent for the input service and pass in a custom flag that signals
-			//the start of the service
-			Intent startIntent = new Intent((Context)FindDeviceFragment.this.getActivity(), InputService.class);
-			startIntent.putExtra(Constants.ACTION.DEVICE_ADDRESS, addr);
-			startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-			Context ctx = (Context)FindDeviceFragment.this.getActivity();
-			ctx.startService(startIntent);
-			Log.i("FindDeviceFragment", "Started Service");
-
-		
-		getFragmentManager().popBackStack();
+        //Set the selected device address and name
+        HashMap<String, String> hashMap = (HashMap<String, String>) listItems.get(position);
+        mDeviceAddress = hashMap.get(DEVICE_ADDRESS);
+        mDeviceName = hashMap.get(DEVICE_NAME);
 	}
-	
+
 	private void scanLeDevice() {
 		new Thread() {
 
@@ -221,6 +228,7 @@ public class FindDeviceFragment extends Fragment implements OnItemClickListener{
 				}
 
 				mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                progressDialog.dismiss();
 			}
 		}.start();
 	}

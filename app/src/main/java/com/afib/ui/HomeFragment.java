@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,8 +18,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.afib.data.Constants;
-import com.afib.data.InputService;
+import com.afib.communication.Constants;
+import com.afib.communication.InputService;
 
 /**
  * Fragment activity used to display a list of basic features to the user.
@@ -205,7 +204,6 @@ public class HomeFragment extends Fragment{
                 	//Set the text to the correct value
                 	if(findDeviceButton.getText().equals("Find Device"))
                 	{
-                		findDeviceButton.setText("Disconnect");
                 	}else
                 	{
                 		findDeviceButton.setText("Find Device");
@@ -244,7 +242,8 @@ public class HomeFragment extends Fragment{
 				//log our message value
 				//Log.i("HomeFragment", "BroadcastReceiver: " + msgFromService);
                 byte[] data = intent.getByteArrayExtra("EXTRA_DATA");
-                Log.i("HomeFrament", "BroadcastREceiver: " + data.toString());
+                if(data != null)
+                    Log.i("HomeFrament", "BroadcastReceiver: " + data.toString());
  
 			}
 		};

@@ -9,8 +9,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -18,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.afib.communication.Constants;
 import com.afib.graph.GraphThread;
 import com.afib.graph.LineGraph;
 import java.util.concurrent.BlockingQueue;
@@ -138,7 +138,7 @@ public class GraphFragment extends Fragment{
             public void onReceive(Context context, Intent intent) {
                 //extract our message from intent
                 //String msgFromService = intent.getStringExtra("EXTRA_DATA");
-                byte[] data = intent.getByteArrayExtra("EXTRA_DATA");
+                byte[] data = intent.getByteArrayExtra(Constants.ACTION.STREAM_DATA);
                 //byte[] data = msgFromService.getBytes();
                 //log our message value
                 Log.i("GraphFragment", "BroadcastReceiver: " + data.toString());

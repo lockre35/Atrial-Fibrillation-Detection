@@ -1,16 +1,9 @@
-package com.afib.data;
+package com.afib.communication;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.nio.charset.*;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -34,8 +27,6 @@ import android.util.Log;
 
 import com.afib.ui.MainActivity;
 import com.afib.ui.R;
-import com.afib.communication.*;
-
 
 
 /**
@@ -47,6 +38,7 @@ import com.afib.communication.*;
  */
 public class InputService extends Service {
 	private static final String LOG_TAG = "ForegroundService";
+    private String OutputFileName;
 	private boolean isThreadRunning;
 	private Thread dataGet;
 	
@@ -66,12 +58,9 @@ public class InputService extends Service {
 
 	public long startTime = 0;
 
-	public final static UUID UUID_BLE_SHIELD_TX = UUID
-			.fromString(GattAttributes.BLE_SHIELD_TX);
-	public final static UUID UUID_BLE_SHIELD_RX = UUID
-			.fromString(GattAttributes.BLE_SHIELD_RX);
-	public final static UUID UUID_BLE_SHIELD_SERVICE = UUID
-			.fromString(GattAttributes.BLE_SHIELD_SERVICE);
+	public final static UUID UUID_BLE_SHIELD_TX = UUID.fromString(GattAttributes.BLE_SHIELD_TX);
+	public final static UUID UUID_BLE_SHIELD_RX = UUID.fromString(GattAttributes.BLE_SHIELD_RX);
+	public final static UUID UUID_BLE_SHIELD_SERVICE = UUID.fromString(GattAttributes.BLE_SHIELD_SERVICE);
 
 	private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
 		@Override
@@ -159,20 +148,13 @@ public class InputService extends Service {
                 System.arraycopy(byteArray, 0, result, 0,  byteArray.length);
                 System.arraycopy(rx, 0, result, byteArray.length, rx.length);
                 byteArray = result;
-/*                if(byteArray.length > 1000)
+                if(byteArray.length > Constants.ACTION.INPUT_BLOCK_SIZE)
                 {
-                    intent.putExtra(EXTRA_DATA,byteArray);
-                    sendBroadcast(intent);
-                    byteArray = new byte[0];
-                }*/
-                if(byteArray.length > 100)
-                {
-                    intent.putExtra(EXTRA_DATA,byteArray);
+                    intent.putExtra(Constants.ACTION.STREAM_DATA,byteArray);
                     sendBroadcast(intent);
                     byteArray = new byte[0];
                 }
             }
-			//intent.putExtra(EXTRA_DATA, rx);
 		}
 	}
 	
@@ -397,8 +379,9 @@ public class InputService extends Service {
 		if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
 			
 			Log.i("InputService", "Received Start Foreground Intent ");
-			
+			OutputFileName = intent.getStringExtra(Constants.ACTION.OUTPUT_FILENAME);
 			mBluetoothDeviceAddress = intent.getStringExtra(Constants.ACTION.DEVICE_ADDRESS);
+
 			Log.i("InputService", "Device Address: " + mBluetoothDeviceAddress);
 			
 			if (!initialize()) {
@@ -409,9 +392,7 @@ public class InputService extends Service {
 			}
 			startTime = System.currentTimeMillis();
 			connect(mBluetoothDeviceAddress);
-			
-			//mDeviceName = intent.getStringExtra(Constants.ACTION.DEVICE_NAME);
-			
+
 			//Create an intent for the notification to return to (MainActivity.class)
 			Intent notificationIntent = new Intent(this, MainActivity.class);
 			notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
