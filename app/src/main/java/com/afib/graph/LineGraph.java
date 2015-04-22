@@ -1,15 +1,16 @@
 package com.afib.graph;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint.Align;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Paint.Align;
 
 
 public class LineGraph {
@@ -45,16 +46,22 @@ public class LineGraph {
 			};
 		mRenderer.setInitialRange(initialRange);
 		mRenderer.setPanEnabled(false, false);
+        mRenderer.setZoomEnabled(false, false);
 		mRenderer.setAxisTitleTextSize(6);
 		mRenderer.setAxesColor(Color.BLACK);
 		mRenderer.setGridColor(Color.GRAY);
 		mRenderer.setYLabelsColor(0,Color.BLACK);
 		mRenderer.setXLabelsColor(Color.BLACK);
-		mRenderer.setYAxisAlign(Align.LEFT, 0);
+		//mRenderer.setYAxisAlign(Align.LEFT, 0);
+        mRenderer.setYLabelsAlign(Align.RIGHT);
+        mRenderer.setYLabelsPadding(5);
 		mRenderer.setShowGrid(true);
-		mRenderer.setBackgroundColor(Color.LTGRAY);
-		//mRenderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
-		mRenderer.setMarginsColor(Color.LTGRAY);
+		//mRenderer.setBackgroundColor(Color.LTGRAY);
+        mRenderer.setApplyBackgroundColor(true);
+        mRenderer.setBackgroundColor(Color.TRANSPARENT);
+		mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00));
+        mRenderer.setShowLegend(false);
+		//mRenderer.setMarginsColor(Color.WHITE);
 	}
 	
 	public GraphicalView getView(Context context)

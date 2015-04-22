@@ -12,10 +12,9 @@
 	    android:id="@+id/chart"
         android:layout_width="wrap_content"
         android:layout_height="200dip"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="97dp" 
-        android:background="#FFFFFF">
+        android:background="@android:color/transparent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
     </RelativeLayout>
 
     <Button
@@ -28,44 +27,34 @@
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:layout_below="@+id/chart"
-        android:layout_centerHorizontal="true" />
-    
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
+
     <TextView
-        android:id="@+id/phoneStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_below="@+id/button1"
-        android:layout_marginLeft="17dp"
-        android:layout_marginTop="37dp"
-        android:text="Raw Data"
-        android:textSize="30dp"
-        android:textColor="#243CDC" />
-    
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_below="@+id/phoneStatus" >
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Device Streaming Properly!"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:typeface="normal"
+        android:textColor="#ff2c9903" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_gravity="top"
-            android:gravity="top" >
-
-            <TextView
-                android:id="@+id/phoneMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15dp"
-       			android:textColor="#330000" />
-
-        </LinearLayout>
-    </ScrollView>
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="ECG Data Being Recorded!"
+        android:id="@+id/textView2"
+        android:textStyle="bold"
+        android:typeface="normal"
+        android:textColor="#ff2c9903"
+        android:layout_below="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="10dp" />
 
 
 </RelativeLayout>

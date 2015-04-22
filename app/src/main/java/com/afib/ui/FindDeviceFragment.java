@@ -161,7 +161,7 @@ public class FindDeviceFragment extends Fragment implements OnItemClickListener 
             //the start of the service
             Intent startIntent = new Intent((Context)FindDeviceFragment.this.getActivity(), InputService.class);
             startIntent.putExtra(Constants.ACTION.DEVICE_ADDRESS, mDeviceAddress);
-            startIntent.putExtra(Constants.ACTION.OUTPUT_FILENAME, data.getStringExtra(FILE_NAME));
+            startIntent.putExtra(Constants.ACTION.OUTPUT_FILENAME, getActivity().getExternalFilesDir(null).getAbsolutePath() + "/afib_recordings/" + data.getStringExtra(FILE_NAME));
             startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             Context ctx = (Context)FindDeviceFragment.this.getActivity();
             ctx.startService(startIntent);

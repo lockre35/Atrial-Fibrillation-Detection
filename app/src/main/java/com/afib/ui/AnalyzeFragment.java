@@ -1,11 +1,11 @@
 package com.afib.ui;
 
-import org.achartengine.GraphicalView;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,13 +15,15 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.afib.communication.Constants;
 import com.afib.graph.GraphThread;
 import com.afib.graph.LineGraph;
-import java.util.concurrent.BlockingQueue;
+
+import org.achartengine.GraphicalView;
+
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * GraphFragment extends Fragment to present a streaming graph to 
@@ -29,7 +31,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * 
  * @author Logan
  */
-public class GraphFragment extends Fragment{
+public class AnalyzeFragment extends Fragment{
 
 	private static GraphicalView view;
 	private LineGraph line = new LineGraph();
@@ -54,8 +56,8 @@ public class GraphFragment extends Fragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		//Initialize the view for this fragment
-		View inflatedView = inflater.inflate(R.layout.graphfragment, container, false);
-		
+		View inflatedView = inflater.inflate(R.layout.analyzefragment, container, false);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		//Locate views in the layout
 		button1 = (Button) inflatedView.findViewById(R.id.button1);
 		graphView = (RelativeLayout) inflatedView.findViewById(R.id.chart);

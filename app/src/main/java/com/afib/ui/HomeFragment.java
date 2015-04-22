@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class HomeFragment extends Fragment{
 	public Button graphActivityButton;
 	public Button findDeviceButton;
 	public Button instructionsButton;
+    public Button analyzeButton;
 	private BroadcastReceiver mReceiver;
 	private boolean isServiceRunning;
 	
@@ -48,11 +50,12 @@ public class HomeFragment extends Fragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		//Initialize the view for this fragment
 		View inflatedView = inflater.inflate(R.layout.homefragment, container, false);
-			   
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		//Locate views in the layout
 		graphActivityButton = (Button) inflatedView.findViewById(R.id.GraphActivityButton);
 		findDeviceButton = (Button) inflatedView.findViewById(R.id.Button02);
         instructionsButton = (Button) inflatedView.findViewById(R.id.Button03);
+        analyzeButton = (Button) inflatedView.findViewById(R.id.Button04);
 
 		//Check if the input service is already running and set the text
 		//of the findDeviceButton accordingly
@@ -88,6 +91,26 @@ public class HomeFragment extends Fragment{
             public void onClick(View v) {
                 // Create new fragment and transaction
                 Fragment newFragment = new GuideFragment();
+                // consider using Java coding conventions (upper first char class names!!!)
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack so that the return button works
+                // properly
+                transaction.replace(android.R.id.content, newFragment);
+                transaction.addToBackStack(null);
+
+                // Commit the transaction
+                transaction.commit();
+            }
+        });
+
+        //Add an onclick listener to the button so that we can start and stop the ECG graph
+        analyzeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create new fragment and transaction
+                Fragment newFragment = new AnalyzeFragment();
                 // consider using Java coding conventions (upper first char class names!!!)
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -169,6 +192,28 @@ public class HomeFragment extends Fragment{
         //Add an ontouch listener so that the text and padding of a button can be changed
         //when clicked
         instructionsButton.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                    //Button is pressed down
+                    case MotionEvent.ACTION_DOWN:
+                        //Create that nice button press effect by changing padding
+                        instructionsButton.setPadding(0, 7, 0, 0);
+                        break;
+                    //Button is released
+                    case MotionEvent.ACTION_UP:
+                        //Change padding back to original position
+                        instructionsButton.setPadding(0, 0, 0, 0);
+                        break;
+                }
+                return false;
+
+            }
+        });
+
+        //Add an ontouch listener so that the text and padding of a button can be changed
+        //when clicked
+        analyzeButton.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {

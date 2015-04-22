@@ -10,24 +10,16 @@ import java.util.concurrent.BlockingQueue;
 public class GraphThread extends Thread{
 	
 	//Text view for raw ouput
-	private TextView RawOutput;
 	private LineGraph Line;
 	private GraphicalView View;
-	private Context Context;
-	private Activity Activity;
 	private Point CurrentPoint;
     private BlockingQueue<byte[]> DataQueue;
-    private byte[] data;
 	
 	//Create a new thread by passing in information about the view, the line to display, and the context
-	public GraphThread(TextView rawOutput, LineGraph line, GraphicalView view, Context context, Activity activity, byte[] data, BlockingQueue<byte[]> dataQueue){
+	public GraphThread(LineGraph line, GraphicalView view, BlockingQueue<byte[]> dataQueue){
 		super();
-		this.RawOutput = rawOutput;
 		this.Line = line;
 		this.View = view;
-		this.Context = context;
-		this.Activity = activity;
-        this.data = data;
         this.DataQueue = dataQueue;
 	}
 	
@@ -66,19 +58,6 @@ public class GraphThread extends Thread{
 
                         //Set the CurrentPoint value so we can print it on the screen as a raw data point (causes lag on the UI thread)
                         CurrentPoint = p;
-
-                        //To change views in the UI Thread, we need to add changes to a method like this
-                        if(j%100==0)
-                        {
-                            Activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //Display raw data points
-                                    RawOutput.append("(" + CurrentPoint.getX() + "," + CurrentPoint.getY() + ")\r\n");
-                                    return;
-                                }
-                            });
-                        }
 
                         //Add the new point to the line
                         Line.addNewPoints(p);
