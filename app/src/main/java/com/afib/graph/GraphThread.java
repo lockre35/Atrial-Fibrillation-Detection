@@ -42,28 +42,31 @@ public class GraphThread extends Thread{
                     {
                         return;
                     }
-                    for(int j = 0; j<dataFromQueue.length; j+=1)
+                    else
                     {
-                        try{
-                            //Slow the display down
-                            Thread.sleep(5);
-                        }catch (InterruptedException e){
-                            e.printStackTrace();
-                            return;
+                        for(int j = 0; j<dataFromQueue.length; j+=1)
+                        {
+                            try{
+                                //Slow the display down
+                                Thread.sleep(10);
+                            }catch (InterruptedException e){
+                                e.printStackTrace();
+                                return;
+                            }
+
+                            //Obtain a new point
+                            Point p = pointBuilder.getDataFromReciever((i*100) + j,dataFromQueue[j]);
+
+
+                            //Set the CurrentPoint value so we can print it on the screen as a raw data point (causes lag on the UI thread)
+                            CurrentPoint = p;
+
+                            //Add the new point to the line
+                            Line.addNewPoints(p);
+
+                            //Update the graph view
+                            View.repaint();
                         }
-
-                        //Obtain a new point
-                        Point p = pointBuilder.getDataFromReciever((i*100) + j,dataFromQueue[j]);
-
-
-                        //Set the CurrentPoint value so we can print it on the screen as a raw data point (causes lag on the UI thread)
-                        CurrentPoint = p;
-
-                        //Add the new point to the line
-                        Line.addNewPoints(p);
-
-                        //Update the graph view
-                        View.repaint();
                     }
                 }
 

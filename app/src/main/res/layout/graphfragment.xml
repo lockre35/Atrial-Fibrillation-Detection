@@ -34,24 +34,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Device Streaming Properly!"
+        android:text="Getting streaming status..."
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
         android:textStyle="bold"
-        android:typeface="normal"
-        android:textColor="#ff2c9903" />
+        android:typeface="normal" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="ECG Data Being Recorded!"
+        android:text=""
         android:id="@+id/textView2"
         android:textStyle="bold"
         android:typeface="normal"
-        android:textColor="#ff2c9903"
+        android:textColor="#ff9f190c"
         android:layout_below="@+id/textView"
         android:layout_alignStart="@+id/textView"
         android:layout_marginTop="10dp" />

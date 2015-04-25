@@ -74,48 +74,47 @@ public class InputService extends Service {
 		//If we are starting the service
 		if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             DataQueue = new ArrayBlockingQueue(1000);
-			Log.i("InputService", "Received Start Foreground Intent ");
-			OutputFileName = intent.getStringExtra(Constants.ACTION.OUTPUT_FILENAME);
+            Log.i("InputService", "Received Start Foreground Intent ");
+            OutputFileName = intent.getStringExtra(Constants.ACTION.OUTPUT_FILENAME);
             //Initialize the gatt service to communicate with the ECG
-			GattService = new GattService(intent.getStringExtra(Constants.ACTION.DEVICE_ADDRESS), this, DataQueue);
+            GattService = new GattService(intent.getStringExtra(Constants.ACTION.DEVICE_ADDRESS), this, DataQueue);
 
-			Log.i("InputService", "Device Address: " + GattService.mBluetoothDeviceAddress);
-			
-			if (!GattService.initialize()) {
-				Log.e("InputService", "Unable to initialize Bluetooth");
-				isThreadRunning = false;
-				stopForeground(true);
-				stopSelf();
-			}
-			GattService.connect(GattService.mBluetoothDeviceAddress);
+            Log.i("InputService", "Device Address: " + GattService.mBluetoothDeviceAddress);
 
-			//Create an intent for the notification to return to (MainActivity.class)
-			Intent notificationIntent = new Intent(this, MainActivity.class);
-			notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
-			notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-					| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-					notificationIntent, 0);
-			
-			//Create notification
-			Bitmap icon = BitmapFactory.decodeResource(getResources(),
-					R.drawable.ic_launcher);
-			Notification notification = new NotificationCompat.Builder(this)
-					.setContentTitle("Atrial Fibrilation Detection")
-					.setTicker("Atrial Fibrilation Detection")
-					.setContentText("Data Streaming")
-					.setSmallIcon(R.drawable.ic_launcher)
-					.setLargeIcon(
-							Bitmap.createScaledBitmap(icon, 128, 128, false))
-					.setContentIntent(pendingIntent)
-					.setOngoing(true)
-					.build();
-			startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-					notification);
-			
-			//If the thread is not running (first time starting the service)
-			if(!isThreadRunning)
-			{
+            if (!GattService.initialize()) {
+                Log.e("InputService", "Unable to initialize Bluetooth");
+                isThreadRunning = false;
+                stopForeground(true);
+                stopSelf();
+            }
+            GattService.connect(GattService.mBluetoothDeviceAddress);
+
+            //Create an intent for the notification to return to (MainActivity.class)
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                    notificationIntent, 0);
+
+            //Create notification
+            Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.ic_launcher);
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setContentTitle("Atrial Fibrilation Detection")
+                    .setTicker("Atrial Fibrilation Detection")
+                    .setContentText("Data Streaming")
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setLargeIcon(
+                            Bitmap.createScaledBitmap(icon, 128, 128, false))
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)
+                    .build();
+            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                    notification);
+
+            //If the thread is not running (first time starting the service)
+            if (!isThreadRunning) {
                 outputThread = new OutputThread(OutputFileName, DataQueue);
                 outputThread.start();
                 isThreadRunning = true;
@@ -170,8 +169,15 @@ public class InputService extends Service {
 //				
 //				//Start this thread
 //				dataGet.start();
-			}
-			isThreadRunning = true;
+            }
+            isThreadRunning = true;
+        //If checking service status
+        } else if (intent.getAction().equals(Constants.ACTION.CHECK_STATUS)) {
+            Log.i(LOG_TAG, "Received check status Intent");
+            //Check the status of the file store thread
+            boolean threadStatus = outputThread.isAlive() && isThreadRunning;
+            Intent i = new Intent("android.intent.action.MAIN").putExtra(Constants.ACTION.STREAM_STATUS, threadStatus);
+            this.sendBroadcast(i);
 		//If stopping the service
 		} else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
 			//Stop the thread and stop the service
