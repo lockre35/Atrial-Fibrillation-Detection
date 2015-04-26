@@ -11,6 +11,9 @@ import java.io.InputStreamReader;
 import java.util.Stack;
 import java.util.concurrent.BlockingQueue;
 
+import flanagan.analysis.CurveSmooth;
+
+
 /**
  * Created by Logan on 4/21/2015.
  */
@@ -39,6 +42,8 @@ public class OutputThread extends Thread{
         try
         {
             FileOutputStream outputStream = new FileOutputStream(OutputFile, OutputAppend);
+            double[] input = new double[1000];
+            int i = 0;
             while(!this.isInterrupted())
             {
                 byte[] dataFromQueue;
@@ -51,7 +56,22 @@ public class OutputThread extends Thread{
                 {
                     for(Byte singleByte : dataFromQueue)
                     {
-                        outputStream.write(singleByte & 0xFF);
+                        int temp = singleByte & 0xFF;
+                        input[i] = temp;
+                        i++;
+                        //outputStream.write(singleByte & 0xFF);
+                        if(i > 999)
+                        {
+                            CurveSmooth csm = new CurveSmooth(input);
+                            double[] smoothedData = csm.savitzkyGolay(40);
+                            for(double singleDouble : smoothedData)
+                            {
+                                byte storedByte = (byte) singleDouble;
+                                outputStream.write(storedByte & 0xFF);
+                            }
+                            i = 0;
+                            input = new double[1000];
+                        }
                     }
                 }
             }

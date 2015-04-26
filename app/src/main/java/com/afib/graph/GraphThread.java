@@ -35,6 +35,14 @@ public class GraphThread extends Thread{
                 //Clear any existing data
                 Line.removeAllPoints();
                 PointBuilder pointBuilder = new PointBuilder();
+                while(DataQueue.size() > 2)
+                {
+                    byte[] dataFromQueue;
+                    if((dataFromQueue = DataQueue.take()) == "Terminate Thread".getBytes())
+                    {
+                        return;
+                    }
+                }
                 for(int i = 0; i<10; i++)
                 {
                     byte[] dataFromQueue;
@@ -48,7 +56,7 @@ public class GraphThread extends Thread{
                         {
                             try{
                                 //Slow the display down
-                                Thread.sleep(10);
+                                Thread.sleep(6);
                             }catch (InterruptedException e){
                                 e.printStackTrace();
                                 return;

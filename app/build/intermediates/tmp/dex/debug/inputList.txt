@@ -1,3 +1,4 @@
 C:\Users\Logan\AndroidStudioProjects\Atrial-Fibrillation-Detection\app\build\intermediates\classes\debug
 C:\Users\Logan\AndroidStudioProjects\Atrial-Fibrillation-Detection\app\build\intermediates\pre-dexed\debug\achartengine-1.1.0-4dcad0285a81dd71855c245eb53e5780af267303.jar
 C:\Users\Logan\AndroidStudioProjects\Atrial-Fibrillation-Detection\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-1c73b204a351bc2aa219989650e87bad8ee9640b.jar
+C:\Users\Logan\AndroidStudioProjects\Atrial-Fibrillation-Detection\app\build\intermediates\pre-dexed\debug\flanagan-2-0dc75c47807077c5530274bfc28a197ad34148b6.jar
