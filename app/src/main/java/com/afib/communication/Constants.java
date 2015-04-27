@@ -14,6 +14,7 @@ public class Constants {
         public static String INPUT_FILENAME = "Input_File_Name";
         public static int INPUT_BLOCK_SIZE = 100;
         public static int DELAY_BETWEEN_INPUT = 5;
+        public static String BLE_DISCONNECTED = "BLE_DISCONNECTED";
 	}
  
 	public interface NOTIFICATION_ID {

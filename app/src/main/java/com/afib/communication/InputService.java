@@ -48,6 +48,8 @@ public class InputService extends Service {
 	private Thread outputThread;
     private GattService GattService;
     private BlockingQueue DataQueue;
+    public Notification notification;
+    public boolean BLEDisconnected = false;
 	
 
 	/**
@@ -100,7 +102,7 @@ public class InputService extends Service {
             //Create notification
             Bitmap icon = BitmapFactory.decodeResource(getResources(),
                     R.drawable.ic_launcher);
-            Notification notification = new NotificationCompat.Builder(this)
+            notification = new NotificationCompat.Builder(this)
                     .setContentTitle("Atrial Fibrilation Detection")
                     .setTicker("Atrial Fibrilation Detection")
                     .setContentText("Data Streaming")
@@ -118,57 +120,6 @@ public class InputService extends Service {
                 outputThread = new OutputThread(OutputFileName, DataQueue);
                 outputThread.start();
                 isThreadRunning = true;
-//				//Service parameter to pass to this thread
-//				final Service parameter = this;
-//
-//				dataGet = new Thread(new Runnable(){
-//				    public void run() {
-//				    	InputStream dataInputStream = null;
-//				    	BufferedReader br = null;
-//				    	
-//				    	FileOutputStream localOutputStream = null;
-//				    	
-//				        try {
-//				        	dataInputStream = parameter.getAssets().open("scope_32.csv");
-//				        	br = new BufferedReader(new InputStreamReader(dataInputStream));
-//				        	
-//				        	String path = parameter.getExternalFilesDir(null).getAbsolutePath();
-//				        	File file = new File(path + "/afib_recording.txt");
-//				        	//Log.i("InputService",path);
-//				        	localOutputStream = new FileOutputStream(file);
-//				        	/*try {
-//				        	    stream.write("testing".getBytes());
-//				        	} finally {
-//				        	    stream.close();
-//				        	}*/
-//				        }
-//				        catch (Exception e) {
-//				            Log.e("Exception", "File write failed: " + e.toString());
-//				        }
-//					    // TODO Auto-generated method stub
-//					    while(true)
-//					    {
-//				           try {
-//				               //Thread.sleep(5000);
-//				               //Log.i("InputService", "Service Running Still");
-//				               String strLine = br.readLine();
-//				               localOutputStream.write((strLine).getBytes());
-//				               //Send a message to broadcast receivers
-//				               Intent i = new Intent("android.intent.action.MAIN").putExtra("some_msg", strLine);
-//				               parameter.sendBroadcast(i);
-//				               
-//				           } catch (Exception e) {
-//				               // TODO Auto-generated catch block
-//				               e.printStackTrace();
-//				               //Kill the thread
-//				               return;
-//				           }
-//					    }
-//	            }
-//				});
-//				
-//				//Start this thread
-//				dataGet.start();
             }
             isThreadRunning = true;
         //If checking service status
@@ -178,21 +129,16 @@ public class InputService extends Service {
             boolean threadStatus = outputThread.isAlive() && isThreadRunning;
             Intent i = new Intent("android.intent.action.MAIN").putExtra(Constants.ACTION.STREAM_STATUS, threadStatus);
             this.sendBroadcast(i);
+        } else if(intent.getAction().equals(Constants.ACTION.BLE_DISCONNECTED)){
+            Intent i = new Intent("android.intent.action.MAIN").putExtra(Constants.ACTION.BLE_DISCONNECTED, BLEDisconnected);
+            this.sendBroadcast(i);
 		//If stopping the service
 		} else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
 			//Stop the thread and stop the service
 			Log.i(LOG_TAG, "Received Stop Foreground Intent");
-			isThreadRunning = false;
-			GattService.close();
-			//dataGet.interrupt();
-            try{
-                if(outputThread.isAlive())
-                    DataQueue.put("Terminate Thread".getBytes());
-            }catch(InterruptedException e){
-                e.printStackTrace();
-            }
-			stopForeground(true);
-			stopSelf();
+			Kill();
+            stopForeground(true);
+            stopSelf();
 		}
 		
 		//Return as foreground service (makes it harder for the system to destroy the service)
@@ -224,4 +170,18 @@ public class InputService extends Service {
 		// Used only in case of bound services.
 		return null;
 	}
+
+    public void Kill()
+    {
+        isThreadRunning = false;
+        GattService.close();
+        //dataGet.interrupt();
+        try{
+            if(outputThread.isAlive())
+                DataQueue.put("Terminate Thread".getBytes());
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        BLEDisconnected = true;
+    }
 }

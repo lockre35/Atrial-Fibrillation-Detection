@@ -95,11 +95,18 @@ public class AnalyzeFragment extends Fragment{
         String path = getActivity().getExternalFilesDir(null).getAbsolutePath();
         File recordingFolder = new File(path + "/afib_recordings");
         File[] files = recordingFolder.listFiles();
-        for (File file : files) {
-            String fileName = file.getName();
-            spinnerAdapter.add(fileName);
+        if(files != null)
+        {
+            for (File file : files) {
+                String fileName = file.getName();
+                spinnerAdapter.add(fileName);
+            }
+            spinnerAdapter.notifyDataSetChanged();
         }
-        spinnerAdapter.notifyDataSetChanged();
+        else
+        {
+            spinnerAdapter.add("No files to display");
+        }
 
 
         //Add an onclick listener to the button so that we can start and stop the ECG graph

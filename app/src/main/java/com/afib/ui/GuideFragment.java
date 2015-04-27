@@ -210,19 +210,19 @@ public class GuideFragment extends Fragment{
                 leftButton.setVisibility(View.VISIBLE);
                 title.setText(title2);
                 message.setText(message2);
-                currentVideo = R.raw.scene1;
+                currentVideo = R.raw.scene2;
                 break;
             case 3:
                 rightButton.setVisibility(View.VISIBLE);
                 title.setText(title3);
                 message.setText(message3);
-                currentVideo = R.raw.scene1;
+                currentVideo = R.raw.scene3;
                 break;
             case 4:
                 rightButton.setVisibility(View.INVISIBLE);
                 title.setText(title4);
                 message.setText(message4);
-                currentVideo = R.raw.scene1;
+                currentVideo = R.raw.scene4;
                 break;
         }
     }

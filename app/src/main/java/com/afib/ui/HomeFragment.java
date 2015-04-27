@@ -59,12 +59,23 @@ public class HomeFragment extends Fragment{
 
 		//Check if the input service is already running and set the text
 		//of the findDeviceButton accordingly
-	    if(isMyServiceRunning(InputService.class))
+	    if(isMyServiceRunning(InputService.class) && !getActivity().getIntent().hasExtra(Constants.ACTION.BLE_DISCONNECTED))
 		{
 			isServiceRunning = true;
 			findDeviceButton.setText("Disconnect");
 		}
-		
+
+        if(getActivity().getIntent().hasExtra(Constants.ACTION.BLE_DISCONNECTED))
+        {
+            //Create a new intent for the input service and pass in a custom flag that signals the
+            //end of the service
+            Intent startIntent = new Intent((Context)HomeFragment.this.getActivity(), InputService.class);
+            startIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
+            Context ctx = (Context)HomeFragment.this.getActivity();
+            ctx.startService(startIntent);
+            isServiceRunning = false;
+        }
+
 		//Add an onclick listener to the button so that we can start and stop the ECG graph
 		graphActivityButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
@@ -308,7 +319,9 @@ public class HomeFragment extends Fragment{
 		//unregister our receiver
 		getActivity().unregisterReceiver(this.mReceiver);
 	}
-	
+
+
+
 	private boolean isMyServiceRunning(Class<?> serviceClass) {
 	    ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
 	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {

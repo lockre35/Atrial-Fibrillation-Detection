@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -33,9 +35,15 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.afib.ui.MainActivity;
+import com.afib.ui.R;
 
 /**
  * Not sure how this is going to go...
@@ -81,11 +89,43 @@ public class GattService {
                 Log.i("InputService", "Connected to GATT server.");
                 // Attempts to discover services after successful connection.
                 Log.i("InputService", "Attempting to start service discovery:"
-                        + mBluetoothGatt.discoverServices());
+                       + mBluetoothGatt.discoverServices());
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 Log.i("InputService", "Disconnected from GATT server.");
                 broadcastUpdate(intentAction);
+
+                //Send an alert to the user and terminate the current running service
+                CallingService.stopForeground(true);
+                //Create an intent for the notification to return to (MainActivity.class)
+                Intent notificationIntent = new Intent(CallingService, MainActivity.class);
+                notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
+                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(CallingService, 0, notificationIntent, 0);
+                //Create notification
+                Bitmap icon = BitmapFactory.decodeResource(CallingService.getResources(),
+                        R.drawable.ic_launcher);
+                Notification notification = new NotificationCompat.Builder(CallingService)
+                        .setContentTitle("Atrial Fibrilation Detection")
+                        .setTicker("Atrial Fibrilation Detection")
+                        .setContentText("ERROR: ECG disconnected!")
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setLargeIcon(
+                                Bitmap.createScaledBitmap(icon, 128, 128, false))
+                        .setContentIntent(pendingIntent)
+                        .setOngoing(true)
+                        .build();
+                notification.defaults |= Notification.DEFAULT_SOUND;
+                notification.defaults |= Notification.DEFAULT_VIBRATE;
+                //DD1919
+                notification.ledARGB = 0xFFDD1919;
+                notification.flags = Notification.FLAG_SHOW_LIGHTS;
+                notification.ledOnMS = 100;
+                notification.ledOffMS = 100;
+                CallingService.startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+                InputService tempService = (InputService) CallingService;
+                //tempService.Kill();
             }
         }
 
