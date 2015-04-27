@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 
+import com.afib.communication.Constants;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.model.TimeSeries;
@@ -19,6 +21,7 @@ public class AnalyzeGraph {
 	//Data to display on line
 	private TimeSeries dataset = new TimeSeries("ECG");
 	private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
+    private int SamplesInASecond = 1000 / Constants.ACTION.DELAY_BETWEEN_INPUT;
 
 	//Values needed to create a graph
 	private XYSeriesRenderer renderer = new XYSeriesRenderer();
@@ -38,7 +41,7 @@ public class AnalyzeGraph {
 		mRenderer.addSeriesRenderer(renderer);
 		mRenderer.setYAxisMax(300);
 		mRenderer.setYAxisMin(0);
-        mRenderer.setXAxisMin(minX*500);
+        mRenderer.setXAxisMin(minX*SamplesInASecond);
 		double[] initialRange = { 
 			    minX, minX + 10, 0, 255
 			};

@@ -62,7 +62,7 @@ public class AnalyzeFragment extends Fragment{
     private ProgressDialog progressDialog;
 
 
-    private static int SamplesInASecond = 500;
+    private static int SamplesInASecond = 1000 / Constants.ACTION.DELAY_BETWEEN_INPUT;;
     /**
      * Override the onCreateView of Fragment so that we can initialize necessary information.
      * More information about the Fragment life cycle can be found at the following link,
@@ -194,6 +194,7 @@ public class AnalyzeFragment extends Fragment{
     public void onStart(){
         //Add the graph view to the screen and initialize a graph thread
         super.onStart();
+        Log.i("AnalyzeFragment","SamplesPerSecond: " + SamplesInASecond);
     }
 
     /**

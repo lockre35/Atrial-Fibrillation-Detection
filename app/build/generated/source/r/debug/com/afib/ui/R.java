@@ -26,8 +26,14 @@ public final class R {
         public static final int home_button_enabled=0x7f020005;
         public static final int home_button_pressed=0x7f020006;
         public static final int ic_launcher=0x7f020007;
-        public static final int scene00001=0x7f020008;
-        public static final int test_selector=0x7f020009;
+        public static final int left_arrow=0x7f020008;
+        public static final int left_arrow_enabled=0x7f020009;
+        public static final int left_arrow_pressed=0x7f02000a;
+        public static final int right_arrow=0x7f02000b;
+        public static final int right_arrow_enabled=0x7f02000c;
+        public static final int right_arrow_pressed=0x7f02000d;
+        public static final int scene00001=0x7f02000e;
+        public static final int test_selector=0x7f02000f;
     }
     public static final class id {
         public static final int Button02=0x7f0a0016;

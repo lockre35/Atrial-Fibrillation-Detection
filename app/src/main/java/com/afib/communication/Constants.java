@@ -13,6 +13,7 @@ public class Constants {
         public static String OUTPUT_FILENAME = "Output_File_Name";
         public static String INPUT_FILENAME = "Input_File_Name";
         public static int INPUT_BLOCK_SIZE = 100;
+        public static int DELAY_BETWEEN_INPUT = 5;
 	}
  
 	public interface NOTIFICATION_ID {

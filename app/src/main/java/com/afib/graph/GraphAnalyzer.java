@@ -2,6 +2,8 @@ package com.afib.graph;
 
 import android.util.Log;
 
+import com.afib.communication.Constants;
+
 import org.achartengine.GraphicalView;
 
 import java.io.BufferedInputStream;
@@ -20,7 +22,7 @@ public class GraphAnalyzer {
     private Point CurrentPoint;
     private int StartSample;
     private int EndSample;
-    private static int SamplesInASecond = 500;
+    private static int SamplesInASecond = 1000 / Constants.ACTION.DELAY_BETWEEN_INPUT;
     private String FileName;
 
     //Create a new thread by passing in information about the view, the line to display, and the context
