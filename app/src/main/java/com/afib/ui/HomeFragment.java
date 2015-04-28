@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment{
 			    // Replace whatever is in the fragment_container view with this fragment,
 			    // and add the transaction to the back stack so that the return button works
 			    // properly
-			    transaction.replace(android.R.id.content, newFragment);
+			    transaction.replace(android.R.id.content, newFragment, "GraphFragment");
 			    transaction.addToBackStack(null);
 
 			    // Commit the transaction
